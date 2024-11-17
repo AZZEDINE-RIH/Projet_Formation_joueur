@@ -1,131 +1,133 @@
 <?php
-include('connexion.php');
+
+require_once 'conn.php';
+
 session_start();
 
-// Initialize error variable
-$error = '';
+$error_message = ''; 
 
-// Check if the user is already logged in
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit();
-}
 
-// Handle 'Remember Me' cookies
-if (isset($_COOKIE['user_id']) && isset($_COOKIE['email']) && !isset($_SESSION['user_id'])) {
-    $_SESSION['user_id'] = $_COOKIE['user_id'];
-    $_SESSION['email'] = $_COOKIE['email'];
-    header('Location: index.php');
-    exit();
-}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $inputEmail = $_POST['inputEmail'];
-    $inputPassword = $_POST['inputPassword'];
-    $rememberMe = isset($_POST['rememberMe']);
+    // Validation des champs
+    if (!empty($email) && !empty($password)) {
+        try {
+            // Connexion à la base de données
+            $db = Database::getInstance();
+            $pdo = $db->getConnection();
 
-    try {
-        // Fetch user details
-        $stmt = $pdo->prepare("SELECT id,nom, email, password FROM admins WHERE email = ?");
-        $stmt->execute([$inputEmail]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            $sql = "SELECT * FROM members WHERE email = :email";
+            $stmt = $pdo->prepare($sql);
 
-        if ($user && password_verify($inputPassword, $user['password'])) {
-            // Store session variables
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['nom']=$user['nom'];
+           
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
 
-            // Handle 'Remember Me' functionality
-            if ($rememberMe) {
-                setcookie('user_id', $user['id'], time() + (86400 * 30), '/'); // 30 days
-                setcookie('email', $user['email'], time() + (86400 * 30), '/'); // 30 days
+            // Exécuter la requête
+            $stmt->execute();
+
+            
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Vérification si l'utilisateur existe
+            if ($stmt->rowCount() == 1 && $user) {
+               
+                if ($password === $user['password']) {
+                    // Stocker les informations de session
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['email'] = $user['email'];
+
+                    
+                    if (isset($_POST["connecter"])) {
+                        $expire = time() + 2 * 30 * 24 * 3600; // 2 mois
+                        setcookie("autoriser", $user['id'], $expire);
+                    }
+
+                    
+                    header("Location: entraineur.php");
+                    exit();
+                } else {
+                    $error_message = "Email ou mot de passe invalide.";
+                }
+            } else {
+                $error_message = "Email ou mot de passe invalide.";
             }
-
-            // Redirect to index.php
-            header('Location: index.php');
-            exit();
-        } else {
-            $error = 'Invalid email or password.';
+        } catch (Exception $e) {
+            $error_message = "Erreur interne : " . $e->getMessage();
         }
-    } catch (PDOException $e) {
-        $error = 'Error: ' . htmlspecialchars($e->getMessage());
+    } else {
+        $error_message = "Veuillez entrer l'email et le mot de passe.";
     }
 }
 ?>
 
-?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Login - SB Admin</title>
-    <link href="css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <title>Page de connexion</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
-<body class="bg-primary">
-    <div id="layoutAuthentication">
-        <div id="layoutAuthentication_content">
-            <main>
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-5">
-                            <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
-                                <div class="card-body">
-                                    <!-- Display error message -->
-                                    <?php if (!empty($error)): ?>
-                                        <div class="alert alert-danger" role="alert">
-                                            <?php echo htmlspecialchars($error); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    <form method="post">
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputEmail" name="inputEmail" type="email" placeholder="name@example.com" required />
-                                            <label for="inputEmail">Email address</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="inputPassword" name="inputPassword" type="password" placeholder="Password" required />
-                                            <label for="inputPassword">Password</label>
-                                        </div>
-                                        <div class="form-check mb-3">
-                                            <input class="form-check-input" id="rememberMe" name="rememberMe" type="checkbox" />
-                                            <label class="form-check-label" for="rememberMe">Remember Me</label>
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a class="small" href="forgot_password.php">Forgot Password?</a>
-                                            <button class="btn btn-primary" type="submit" name="login">Login</button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="register.php">Need an account? Sign up!</a></div>
-                                </div>
-                            </div>
+<body>
+    <section>
+        <div class="container">
+            <form method="POST" action="" class="bg-white rounded shadow-5-strong p-5">
+                <h1 class="text-center">Login</h1>
+                
+                <!-- Affichage du message d'erreur -->
+                <?php if (!empty($error_message)): ?>
+                    <div class="alert alert-danger"><?php echo $error_message; ?></div>
+                <?php endif; ?>
+
+                <!-- Email -->
+                <div class="form-outline mb-4">
+                    <input type="email" name="email" id="email" class="form-control" required />
+                    <label class="form-label" for="email">Adresse email</label>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="form-outline mb-4">
+                    <input type="password" name="password" id="pass" class="form-control" required />
+                    <label class="form-label" for="pass">Mot de passe</label>
+                </div>
+
+                <!-- Option rester connecté -->
+                <div class="row mb-4">
+                    <div class="col d-flex justify-content-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="check" id="check" name="connecter" />
+                            <label class="form-check-label" for="check">Rester connecter</label>
                         </div>
                     </div>
-                </div>
-            </main>
-        </div>
-        <div id="layoutAuthentication_footer">
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                        <div>
-                            <a href="#">Privacy Policy</a>
-                            &middot;
-                            <a href="#">Terms &amp; Conditions</a>
-                        </div>
+                    <div class="col text-center">
+                        <a href="#!">Mot de passe oublié ?</a>
                     </div>
                 </div>
-            </footer>
+
+                <!-- Bouton de soumission -->
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
         </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
