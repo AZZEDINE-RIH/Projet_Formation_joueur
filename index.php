@@ -114,9 +114,26 @@ $players = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </nav>
                                     </div>
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
+                                        Main Pages
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    
+                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="index.php">Dashboard</a>
+                                            <a class="nav-link" href="tables.php">Tables</a>
+                                            <a class="nav-link" href="Administration.php">Administration</a>
+                                        </nav>
+                                    </div>
+
+
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
                                         Error
                                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                     </a>
+                                    
+
+
                                     <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
                                             <a class="nav-link" href="401.php">401 Page</a>
@@ -124,6 +141,7 @@ $players = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <a class="nav-link" href="500.php">500 Page</a>
                                         </nav>
                                     </div>
+
                                 </nav>
                             </div>
                             <div class="sb-sidenav-menu-heading">Addons</div>
