@@ -1,0 +1,121 @@
+<?php
+require 'db_connect.php';
+$player_id = 1; // Example: Fetch player ID dynamically as needed
+
+// Fetch Player Data
+$query_player = "SELECT * FROM players WHERE player_id = $player_id";
+$result_player = $conn->query($query_player);
+$player = $result_player->fetch_assoc();
+
+// Fetch Player Schedule
+$query_schedule = "SELECT * FROM planning WHERE player_id = $player_id ORDER BY FIELD(day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')";
+$result_schedule = $conn->query($query_schedule);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Profile - Football Talent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+        }
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .profile-header {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            overflow: hidden;
+        }
+        .player-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+        }
+        .player-image {
+            position: absolute;
+            right: 50px;
+            bottom: -50px;
+            height: 350px;
+            z-index: 10;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        .stats-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 pt-5">
+                    <h1 class="display-4 fw-bold"><?= $player['name'] ?></h1>
+                    <h3 class="text-white-50"><?= $player['position'] ?></h3>
+                    <div class="mt-4">
+                        <span class="badge bg-danger me-2 fs-5">Age: <?= $player['age'] ?></span>
+                        <span class="badge bg-warning text-dark me-2 fs-5">Nationality: <?= $player['nationality'] ?></span>
+                        <span class="badge bg-success me-2 fs-5">Height: <?= $player['height'] ?> cm</span>
+                        <br>
+                        <span class="badge bg-secondary me-2 fs-5">Years in Academy: <?= $player['years_in_academy'] ?> years</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img src="<?= $player['profile_picture'] ?>" alt="Player" class="player-image">
+        <div class="player-overlay"></div>
+    </div>
+
+    <!-- Training Schedule -->
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Weekly Training Schedule</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Day</th>
+                            <th>Time Slot</th>
+                            <th>Activity</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php while ($schedule = $result_schedule->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= $schedule['day'] ?></td>
+                                <td><?= $schedule['time_slot'] ?></td>
+                                <td><?= $schedule['activity'] ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
