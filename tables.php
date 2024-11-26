@@ -3,11 +3,35 @@ require('connexion.php');
 include('DeletePlayer.php');
 include('fetchStat.php');
 include('AddPlayer.php');
-include('AddMembre.php');
+
 include('DeleteMembre.php');
 
+session_start();
+
+// Fetch player data
+$stmt = $pdo->query("SELECT * FROM joueurs");
+$players = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
+$query = $pdo->prepare("SELECT * FROM members  ");
+// $query->bindParam(':id', $id, PDO::PARAM_INT);
+$query->execute();
+$members = $query->fetchAll(PDO::FETCH_ASSOC);
+
+// Handle adding new member
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_member'])) {
+    $memberName = $_POST['member_name'];
+    $memberEmail = $_POST['member_email'];
+    $memberMetier=$_POST['member_Metier'];
+
+    // Insert new member into the database
+    $stmt = $pdo->prepare("INSERT INTO members (nom, email,metier) VALUES (?, ?,?)");
+    $stmt->execute([$memberName, $memberEmail,$memberMetier]);
+
+    // After insertion, redirect to avoid form resubmission
+    header('Location: tables.php');
+    exit();
+}
 
 ?>
 
@@ -23,15 +47,55 @@ include('DeleteMembre.php');
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .greeting {
+                font-size: 24px;
+                font-weight: bold;
+                color: #4e73df; /* A nice blue color */
+                text-align: center;
+                margin-top: 20px;
+                background-color: #f8f9fc; /* Light background color */
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .greeting h1 {
+                margin: 0;
+                font-size: 2rem;
+            }
+
+            table th, table td {
+                padding: 10px 15px;
+                text-align: left;
+            }
+
+            /* Hover effect for rows */
+            table tbody tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            /* Styling for table borders */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            table th, table td {
+                border: 1px solid #ddd;
+            }
+
+            .table-container {
+                overflow-x: auto; /* Add horizontal scrolling for smaller screens */
+                margin-top: 20px;
+            }
+
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-<<<<<<< HEAD
-            <a class="navbar-brand ps-3" href="index.php"><img src="assets/img/logo.png" alt="" width="180px" > </a>
-=======
             <a class="navbar-brand ps-3" href="index.php">Start Bootstrap</a>
->>>>>>> fb1d3916757e51253a73e398aeefcbc495b4175a
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -49,7 +113,7 @@ include('DeleteMembre.php');
                         <li><a class="dropdown-item" href="#!">Settings</a></li>
                         <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -62,8 +126,9 @@ include('DeleteMembre.php');
                             <div class="sb-sidenav-menu-heading">Core</div>
                             <a class="nav-link" href="index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
+                                Dashboard 
                             </a>
+
                             <div class="sb-sidenav-menu-heading">Interface</div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
@@ -109,6 +174,7 @@ include('DeleteMembre.php');
                                     </div>
 
 
+
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
                                         Error
                                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -128,9 +194,15 @@ include('DeleteMembre.php');
                                 Charts
                             </a>
                             <a class="nav-link" href="tables.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
-                                
+                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i>
+                              
+                            </div>
+                                 Tables
+                                <!-- <select>
+                                    <option> <a href="datatablesSimple"> Liste des membres</a> </option>
+                                    <option> <a href="Administration.php.php">Home</a> </option>
+
+                                </select> -->
                             </a>
                         </div>
                     </div>
@@ -143,72 +215,110 @@ include('DeleteMembre.php');
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">Tables</h1>
                         <ol class="breadcrumb mb-4">
-<<<<<<< HEAD
-                            <li class="breadcrumb-item active">Gestion des Membres du Centre</li>
-=======
-                            <li class="breadcrumb-item active">Dashboard</li>
->>>>>>> fb1d3916757e51253a73e398aeefcbc495b4175a
+                            <li class="breadcrumb-item active">Tables</li>
                         </ol>
-                        <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Joueur</div>
-                                    <p class="mb-0">Total : <b><?php echo $totalPlayers; ?></b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Formations</div>
-                                    <p class="mb-0">Sessions actives : <b><?php echo $activeFormations; ?></b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">Administrateur</div>
-                                    <p class="mb-0">Actifs : <b><?php echo $totalAdmins; ?></b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">Documents</div>
-                                    <p class="mb-0">Validés : <b><?php echo $validatedDocsPercentage; ?>%</b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="greeting">
+    <h1><?php echo 'HELLO Mr ' . htmlspecialchars($_SESSION['nom']); ?></h1>
+</div>
+
+
                         <div class="row">
                             
                              
-                            <div class="col-xl-12">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        Bar Chart Example
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
-                                </div>
+           
+                        <h4>Gestion des Joueurs</h4>
+                        <button class="btn btn-success col-sm-2 mb-3" data-bs-toggle="modal" data-bs-target="#addPlayerModal">Ajouter un Joueur</button>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Liste des joueurs
+                            </div>
+                            <div class="card-body">
+                           <table id="datatablesSimple">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Position</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+        <?php foreach ($players as $index => $player): ?>
+            <tr>
+                <td><?php echo $index + 1; ?></td>
+                <td><?php echo htmlspecialchars($player['nom']); ?></td>
+                <td><?php echo htmlspecialchars($player['age']); ?></td>
+                <td><?php echo htmlspecialchars($player['position']); ?></td>
+                <td>
+    <a href="?delete_player=<?php echo $player['id']; ?>" class="btn btn-sm btn-danger" 
+       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce joueur ?');">
+       Supprimer
+    </a>
+</td>
+
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
                             </div>
                         </div>
+                    </div>
 
 
-    <section id="gestion-membres" class="mt-4">
+                    
+
+                     <!-- Modal for Adding Player -->
+    <div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPlayerModalLabel">Ajouter un Joueur</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" name="nom" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Âge</label>
+                            <input type="number" class="form-control" id="age" name="age" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="position" class="form-label">Position</label>
+                            <input type="text" class="form-control" id="position" name="position" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary" name="add_player">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+                </main>
+<!-- 
+            <div class="row">
+                <div class="col-xl-4 md-2">
+<button type="button" class="btn btn-primary "><a href="Administration.php" class="text-light">Allez au page de Gestion des Administrateur</a></button>
+</div></div> -->
+
+
+
+
+
+
+<section id="gestion-membres" class="mt-4">
     <h4>Gestion des Membres du Centre</h4>
     <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addMemberModal">Ajouter un Membre</button>
     <div class="card mb-4">
@@ -251,13 +361,8 @@ include('DeleteMembre.php');
 
 
 
-
-        
-    </div>
-
-    <a href="index.php">INDEX ICI</a>
-    <!-- Modal for Adding Member -->
-    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+<!-- Modal for Adding Member -->
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -288,15 +393,7 @@ include('DeleteMembre.php');
         </div>
     </div>
 
-                </main>
-
-            <!-- <div class="row">
-                <div class="col-xl-4 md-2">
-<button type="button" class="btn btn-primary "><a href="Admins.php" class="text-light">Allez au page de Gestion des Administrateur</a></button>
-</div></div> -->
-
-
-
+           
 
 
 

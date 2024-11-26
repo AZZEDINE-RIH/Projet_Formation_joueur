@@ -1,16 +1,3 @@
-<?php
-require('connexion.php');
-include('DeletePlayer.php');
-include('fetchStat.php');
-include('AddPlayer.php');
-include('AddMembre.php');
-include('DeleteMembre.php');
-
-
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -19,19 +6,14 @@ include('DeleteMembre.php');
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Dashboard - SB Admin</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <title>Charts - SB Admin</title>
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-<<<<<<< HEAD
-            <a class="navbar-brand ps-3" href="index.php"><img src="assets/img/logo.png" alt="" width="180px" > </a>
-=======
             <a class="navbar-brand ps-3" href="index.php">Start Bootstrap</a>
->>>>>>> fb1d3916757e51253a73e398aeefcbc495b4175a
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -94,21 +76,6 @@ include('DeleteMembre.php');
                                             <a class="nav-link" href="password.php">Forgot Password</a>
                                         </nav>
                                     </div>
-
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                        Main Pages
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    
-                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="index.php">Dashboard</a>
-                                            <a class="nav-link" href="tables.php">Tables</a>
-                                            <a class="nav-link" href="Administration.php">Administration</a>
-                                        </nav>
-                                    </div>
-
-
                                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
                                         Error
                                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -130,7 +97,6 @@ include('DeleteMembre.php');
                             <a class="nav-link" href="tables.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 Tables
-                                
                             </a>
                         </div>
                     </div>
@@ -143,167 +109,50 @@ include('DeleteMembre.php');
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
+                        <h1 class="mt-4">Charts</h1>
                         <ol class="breadcrumb mb-4">
-<<<<<<< HEAD
-                            <li class="breadcrumb-item active">Gestion des Membres du Centre</li>
-=======
-                            <li class="breadcrumb-item active">Dashboard</li>
->>>>>>> fb1d3916757e51253a73e398aeefcbc495b4175a
+                            <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Charts</li>
                         </ol>
-                        <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Joueur</div>
-                                    <p class="mb-0">Total : <b><?php echo $totalPlayers; ?></b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Formations</div>
-                                    <p class="mb-0">Sessions actives : <b><?php echo $activeFormations; ?></b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">Administrateur</div>
-                                    <p class="mb-0">Actifs : <b><?php echo $totalAdmins; ?></b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-body">Documents</div>
-                                    <p class="mb-0">Validés : <b><?php echo $validatedDocsPercentage; ?>%</b></p>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                Chart.js is a third party plugin that is used to generate the charts in this template. The charts below have been customized - for further customization options, please visit the official
+                                <a target="_blank" href="https://www.chartjs.org/docs/latest/">Chart.js documentation</a>
+                                .
                             </div>
                         </div>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-chart-area me-1"></i>
+                                Area Chart Example
+                            </div>
+                            <div class="card-body"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
+                            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                        </div>
                         <div class="row">
-                            
-                             
-                            <div class="col-xl-12">
+                            <div class="col-lg-6">
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-bar me-1"></i>
                                         Bar Chart Example
                                     </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie me-1"></i>
+                                        Pie Chart Example
+                                    </div>
+                                    <div class="card-body"><canvas id="myPieChart" width="100%" height="50"></canvas></div>
+                                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                                 </div>
                             </div>
                         </div>
-
-
-    <section id="gestion-membres" class="mt-4">
-    <h4>Gestion des Membres du Centre</h4>
-    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addMemberModal">Ajouter un Membre</button>
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-table me-1"></i>
-            Liste des membres
-        </div>
-        <div class="card-body">
-            <table id="datatablesSimple">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>metier</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($members as $index => $member): ?>
-                        <tr>
-                            <td><?php echo $index + 1; ?></td>
-                            <td><?php echo htmlspecialchars($member['nom']); ?></td>
-                            <td><?php echo htmlspecialchars($member['email']); ?></td>
-                            <td><?php echo htmlspecialchars($member['metier']); ?></td>
-                            <td>
-                            <a href="?id=<?php echo $member['id']; ?>" class="btn btn-sm btn-danger" 
-                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce membre ?');">
-                                            Supprimer
-                                </a>
-
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    </section>
-
-
-
-
-        
-    </div>
-
-    <a href="index.php">INDEX ICI</a>
-    <!-- Modal for Adding Member -->
-    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addMemberModalLabel">Ajouter un Membre</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="post">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="member_name" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="member_name" name="member_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="member_email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="member_email" name="member_email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="member_email" class="form-label">Metier</label>
-                            <input type="text" class="form-control" id="member_Metier" name="member_Metier" required>
-                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary" name="add_member">Ajouter</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
                 </main>
-
-            <!-- <div class="row">
-                <div class="col-xl-4 md-2">
-<button type="button" class="btn btn-primary "><a href="Admins.php" class="text-light">Allez au page de Gestion des Administrateur</a></button>
-</div></div> -->
-
-
-
-
-
-
-
-
-
-
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
@@ -323,7 +172,6 @@ include('DeleteMembre.php');
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
         <script src="assets/demo/chart-area-demo.js"></script>
         <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+        <script src="assets/demo/chart-pie-demo.js"></script>
     </body>
 </html>
