@@ -1,26 +1,46 @@
 <?php
 require('connexion.php');
 
-// Fetch center members based on a specific id
 
-$query = $pdo->prepare("SELECT * FROM members  ");
-// $query->bindParam(':id', $id, PDO::PARAM_INT);
-$query->execute();
-$members = $query->fetchAll(PDO::FETCH_ASSOC);
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Collect form data
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $metier = $_POST['metier'] ?? '';
+    $image = $_FILES['image'] ?? null;
 
+    // Validate inputs
+    if (empty($name) || empty($email) || empty($metier) || !$image) {
+        die("All fields are required!");
+    }
 
+    // Handle file upload
+    $uploadDir = 'images/icon/'; // Ensure this directory exists and is writable
+    $imagePath = $uploadDir . basename($image['name']);
+    $imageFileType = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
 
-// Handle adding new member
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_member'])) {
-    $memberName = $_POST['member_name'];
-    $memberEmail = $_POST['member_email'];
-    $memberMetier=$_POST['member_Metier'];
+    // Validate the uploaded file
+    if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+        die("Invalid file format! Only JPG, JPEG, PNG, and GIF are allowed.");
+    }
+    if (!move_uploaded_file($image['tmp_name'], $imagePath)) {
+        die("Failed to upload the image.");
+    }
 
-    // Insert new member into the database
-    $stmt = $pdo->prepare("INSERT INTO members (nom, email,metier) VALUES (?, ?,?)");
-    $stmt->execute([$memberName, $memberEmail,$memberMetier]);
+    // Insert data into the database
+    $sql = "INSERT INTO members (nom, email, metier, image) VALUES (:name, :email, :metier, :image)";
+    $stmt = $pdo->prepare($sql);
 
-    // After insertion, redirect to avoid form resubmission
-    header('Location: Admins.php');
-    exit();
+    try {
+        $stmt->execute([
+            ':name' => $name,
+            ':email' => $email,
+            ':metier' => $metier,
+            ':image' => $imagePath,
+        ]);
+    header('location:index.php');
+    } catch (PDOException $e) {
+        echo "Error inserting data: " . $e->getMessage();
+    }
 }

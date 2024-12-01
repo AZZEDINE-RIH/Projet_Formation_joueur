@@ -1,0 +1,16 @@
+
+.modal {
+    z-index: 1050 !important;  /* Make sure the modal stays on top */
+    display: block !important; /* Ensure the modal is visible */
+}
+
+/* Optional: Style the modal header to avoid any conflicts with Bootstrap's default style */
+.modal-header {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+/* Optional: Ensure modal backdrop works */
+.modal-backdrop {
+    z-index: 1040 !important;  /* Ensure the backdrop is below the modal */
+}

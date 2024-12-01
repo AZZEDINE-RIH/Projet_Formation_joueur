@@ -1,10 +1,6 @@
 <?php
 $host = 'localhost';
-<<<<<<< HEAD
 $dbname = 'projetcentreformation';
-=======
-$dbname = 'Projetg';
->>>>>>> fb1d3916757e51253a73e398aeefcbc495b4175a
 $username = 'root';
 $password = '';
 
