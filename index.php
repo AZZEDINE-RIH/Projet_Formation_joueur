@@ -57,6 +57,19 @@ $countMember = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Safely access the count
 $totalMembers = $countMember['total'];
+
+
+
+// Fetch ADMIN data
+$stmt = $pdo->query("SELECT * FROM admins");
+$admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+$stmt = $pdo->query("SELECT COUNT(*) AS total FROM admins");
+$countAdmins = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Safely access the count
+$totalAdmins = $countAdmins['total'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -115,7 +128,7 @@ $totalMembers = $countMember['total'];
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <a class="logo" href="index.html">
+                        <a class="logo" href="index.php">
                             <a class="navbar-brand ps-3" href="index.php"> <img src="images/logo.png" alt="" width="180px"> </a>
                         </a>
                         <button class="hamburger hamburger--slider" type="button">
@@ -134,22 +147,22 @@ $totalMembers = $countMember['total'];
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
-                                    <a href="index.html">Dashboard 1</a>
+                                    <a href="index.php">Dashboard 1</a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="chart.html">
+                            <a href="chart.php">
                                 <i class="fas fa-chart-bar"></i>Charts</a>
                         </li>
                         <li>
-                            <a href="table.html">
+                            <a href="table.php">
                                 <i class="fas fa-table"></i>Tables</a>
                         </li>
 
                         <li>
-                            <a href="calendar.html">
-                                <i class="fas fa-calendar-alt"></i>Calendar</a>
+                            <a href="EmploiTemps.php">
+                                <i class="fas fa-Sheudles-alt"></i>Sheudles</a>
                         </li>
 
                         <li class="has-sub">
@@ -157,13 +170,13 @@ $totalMembers = $countMember['total'];
                                 <i class="fas fa-copy"></i>Pages</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
-                                    <a href="login.html">Login</a>
+                                    <a href="login.php">Login</a>
                                 </li>
                                 <li>
-                                    <a href="register.html">Register</a>
+                                    <a href="register.php">Register</a>
                                 </li>
                                 <li>
-                                    <a href="forget-pass.html">Forget Password</a>
+                                    <a href="forget-pass.php">Forget Password</a>
                                 </li>
                             </ul>
                         </li>
@@ -200,23 +213,23 @@ $totalMembers = $countMember['total'];
                                 <i class="fas fa-tachometer-alt"></i>Dashboard</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="index.html">Dashboard 1</a>
+                                    <a href="index.php">Dashboard 1</a>
                                 </li>
 
                             </ul>
                         </li>
                         <li>
-                            <a href="chart.html">
+                            <a href="chart.php">
                                 <i class="fas fa-chart-bar"></i>Charts</a>
                         </li>
                         <li>
-                            <a href="table.html">
+                            <a href="table.php">
                                 <i class="fas fa-table"></i>Tables</a>
                         </li>
 
                         <li>
-                            <a href="calendar.html">
-                                <i class="fas fa-calendar-alt"></i>Calendar</a>
+                            <a href="EmploiTemps.php">
+                                <i class="fas fa-Sheudles-alt"></i>Sheudles</a>
                         </li>
 
                         <li class="has-sub">
@@ -224,13 +237,13 @@ $totalMembers = $countMember['total'];
                                 <i class="fas fa-copy"></i>Pages</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="login.html">Login</a>
+                                    <a href="login.php">Login</a>
                                 </li>
                                 <li>
-                                    <a href="register.html">Register</a>
+                                    <a href="register.php">Register</a>
                                 </li>
                                 <li>
-                                    <a href="forget-pass.html">Forget Password</a>
+                                    <a href="forget-pass.php">Forget Password</a>
                                 </li>
                             </ul>
                         </li>
@@ -646,6 +659,93 @@ $totalMembers = $countMember['total'];
 
 
                         </div>
+
+
+            <!-- here ADMIN-->
+
+
+                        <div class="row">
+    <div class="col-lg-7">
+        <!-- Left Section -->
+        <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
+            <div class="au-card-title" style="background-image:url('images/bg-title-02.jpg');">
+                <div class="bg-overlay bg-overlay--blue"></div>
+                <h3>
+                    <i class="zmdi zmdi-comment-text"></i>Admins
+                </h3>
+               
+            </div>
+
+            <div class="au-inbox-wrap js-inbox-wrap">
+                <div class="au-message js-list-load">
+                    <div class="au-message__noti">
+                        <p>There are
+                            <span><?php echo htmlspecialchars($totalAdmins, ENT_QUOTES, 'UTF-8'); ?></span>
+                            Admins
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members List -->
+            <?php foreach ($admins as $index => $admin): ?>
+            <div class="au-message__item unread">
+                <div class="au-message__item-inner">
+                    <div class="au-message__item-text">
+                        <div class="avatar-wrap">
+                            <div class="avatar">
+                                <img src="<?php echo htmlspecialchars($admin['image']); ?>" alt="John Smith">
+                            </div>
+                        </div>
+                        <div class="text">
+                            <h5 class="name"><?php echo htmlspecialchars($admin['nom']); ?></h5>
+                            <p>Admin</p>
+                        </div>
+                    </div>
+                    <div class="au-message__item-time">
+                        <span><?php echo htmlspecialchars($admin['email']); ?></span>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- <div class="col-lg-5">
+       
+        <div id="formContainer" class="d-none border p-4 rounded shadow-sm">
+        <form action="AddMembre.php" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nom</label>
+        <input type="text" id="name" name="name" class="form-control" placeholder="Entrez votre nom" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" name="email" class="form-control" placeholder="Entrez votre email" required>
+    </div>
+    <div class="mb-3">
+        <label for="metier" class="form-label">Métier</label>
+        <input type="text" id="metier" name="metier" class="form-control" placeholder="Entrez votre métier" required>
+    </div>
+    <div class="mb-3">
+        <label for="image" class="form-label">Image</label>
+        <input type="file" id="image" name="image" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>
+
+        </div> -->
+    </div>
+</div>
+
+
+                        </div>
+
+
+
+
+
+
                         <div class="au-chat">
 
 
